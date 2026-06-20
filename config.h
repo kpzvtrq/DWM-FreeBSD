@@ -72,7 +72,7 @@ void
 viewnext(const Arg *arg) {
 	unsigned int curtags = selmon->tagset[selmon->seltags];
 	unsigned int nexttags = (curtags << 1);
-	if (nexttags & (1 << 6)) /* Если ушли дальше 6-го тега */
+	if (nexttags & (1 << 6)) /* Переход после 6-го тега */
 		nexttags = 1;        /* Возвращаемся на 1-й */
 	Arg a = { .ui = nexttags };
 	view(&a);
@@ -83,7 +83,7 @@ viewprev(const Arg *arg) {
 	unsigned int curtags = selmon->tagset[selmon->seltags];
 	unsigned int prevtags = (curtags >> 1);
 	if (!prevtags)
-		prevtags = (1 << 5); /* Переход на 6-й тег */
+		prevtags = (1 << 5); /* Переход левее 1-го на 6-й тег */
 	Arg a = { .ui = prevtags };
 	view(&a);
 }
@@ -153,13 +153,14 @@ static const Key keys[] = {
 
   { MODKEY,                       XK_1,      viewprev,       {0} },
   { MODKEY,                       XK_2,      viewnext,       {0} },
-
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
+  
+  { MODKEY|ShiftMask,             XK_1,      tag,            {.ui = 1 << 0} },
+  { MODKEY|ShiftMask,             XK_2,      tag,            {.ui = 1 << 1} },
+  
+  TAGKEYS(                        XK_3,                      2)
+  TAGKEYS(                        XK_4,                      3)
+  TAGKEYS(                        XK_5,                      4)
+  TAGKEYS(                        XK_6,                      5)
 
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
