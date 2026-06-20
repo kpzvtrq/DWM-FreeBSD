@@ -67,6 +67,27 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod4Mask
+
+void
+viewnext(const Arg *arg) {
+	unsigned int curtags = selmon->tagset[selmon->seltags];
+	unsigned int nexttags = (curtags << 1);
+	if (nexttags & (1 << 6)) /* Если ушли дальше 6-го тега */
+		nexttags = 1;        /* Возвращаемся на 1-й */
+	Arg a = { .ui = nexttags };
+	view(&a);
+}
+
+void
+viewprev(const Arg *arg) {
+	unsigned int curtags = selmon->tagset[selmon->seltags];
+	unsigned int prevtags = (curtags >> 1);
+	if (!prevtags)
+		prevtags = (1 << 5); /* Переход на 6-й тег */
+	Arg a = { .ui = prevtags };
+	view(&a);
+}
+
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -130,12 +151,16 @@ static const Key keys[] = {
 	{ 0,                            XK_F3,     spawn,          SHCMD("mixer vol=+0.08") },
 	{ 0,                            XK_F1,     spawn,          SHCMD("mixer vol.mute=toggle") },
 
+  { MODKEY,                       XK_1,      viewprev,       {0} },
+  { MODKEY,                       XK_2,      viewnext,       {0} },
+
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
 	TAGKEYS(                        XK_6,                      5)
+
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
