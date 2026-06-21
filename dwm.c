@@ -865,9 +865,13 @@ focus(Client *c)
 		grabbuttons(c, 1);
 		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
 		setfocus(c);
-	} else {
-		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
-		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
+			} else {
+			if (selmon->sel) {
+			setfocus(selmon->sel);
+		} else {
+			XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
+			XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
+		}
 	}
 	selmon->sel = c;
 	selmon->pertag->sel[selmon->pertag->curtag] = c;
@@ -879,6 +883,10 @@ void
 focusin(XEvent *e)
 {
 	XFocusChangeEvent *ev = &e->xfocus;
+
+	/* Игнорируем сервисные перехваты ввода X11, чтобы дать меню открыться */
+	if (ev->mode == NotifyGrab || ev->mode == NotifyUngrab)
+		return;
 
 	if (selmon->sel && ev->window != selmon->sel->win)
 		setfocus(selmon->sel);
@@ -1099,6 +1107,11 @@ manage(Window w, XWindowAttributes *wa)
 	Window trans = None;
 	XWindowChanges wc;
 
+	/* ЖЕЛЕЗНЫЙ ФИКС: Если окно создано как override_redirect (контекстные меню),
+	   то DWM вообще не должен выделять под него память и пытаться им управлять */
+	if (wa->override_redirect)
+		return;
+
 	c = ecalloc(1, sizeof(Client));
 	c->win = w;
 	/* geometry */
@@ -1110,12 +1123,23 @@ manage(Window w, XWindowAttributes *wa)
 	c->cfact = 1.0;
 
 	updatetitle(c);
+	
+	/* Проверяем тип окна. Если это меню, тултип или диалог — это не обычное окно Хрома! */
+	updatewindowtype(c);
+
 	if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
 		c->mon = t->mon;
 		c->tags = t->tags;
+		c->isfloating = 1;
 	} else {
 		c->mon = selmon;
 		applyrules(c);
+		
+		/* Если это меню Хрома или диалог, которые прикинулись обычным окном,
+		   мы принудительно оставляем их на текущем теге и делаем плавающими */
+		if (c->isfloating || trans != None) {
+			c->tags = selmon->tagset[selmon->seltags];
+		}
 	}
 
 	if (c->x + WIDTH(c) > c->mon->wx + c->mon->ww)
@@ -1130,7 +1154,6 @@ manage(Window w, XWindowAttributes *wa)
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
 	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
 	configure(c); /* propagates border_width, if size doesn't change */
-	updatewindowtype(c);
 	updatesizehints(c);
 	updatewmhints(c);
 	XSelectInput(dpy, w, EnterWindowMask|FocusChangeMask|PropertyChangeMask|StructureNotifyMask);
