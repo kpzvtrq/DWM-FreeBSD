@@ -884,7 +884,6 @@ focusin(XEvent *e)
 {
 	XFocusChangeEvent *ev = &e->xfocus;
 
-	/* Игнорируем сервисные перехваты ввода X11, чтобы дать меню открыться */
 	if (ev->mode == NotifyGrab || ev->mode == NotifyUngrab)
 		return;
 
@@ -1107,8 +1106,6 @@ manage(Window w, XWindowAttributes *wa)
 	Window trans = None;
 	XWindowChanges wc;
 
-	/* ЖЕЛЕЗНЫЙ ФИКС: Если окно создано как override_redirect (контекстные меню),
-	   то DWM вообще не должен выделять под него память и пытаться им управлять */
 	if (wa->override_redirect)
 		return;
 
@@ -1124,7 +1121,6 @@ manage(Window w, XWindowAttributes *wa)
 
 	updatetitle(c);
 	
-	/* Проверяем тип окна. Если это меню, тултип или диалог — это не обычное окно Хрома! */
 	updatewindowtype(c);
 
 	if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {
@@ -1135,8 +1131,6 @@ manage(Window w, XWindowAttributes *wa)
 		c->mon = selmon;
 		applyrules(c);
 		
-		/* Если это меню Хрома или диалог, которые прикинулись обычным окном,
-		   мы принудительно оставляем их на текущем теге и делаем плавающими */
 		if (c->isfloating || trans != None) {
 			c->tags = selmon->tagset[selmon->seltags];
 		}
