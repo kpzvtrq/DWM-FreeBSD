@@ -1,22 +1,22 @@
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 10;       /* vert outer gap between windows and screen edge */
+static const unsigned int gappih    = 8;        /* horiz inner gap between windows */
+static const unsigned int gappiv    = 8;        /* vert inner gap between windows */
+static const unsigned int gappoh    = 8;        /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 8;        /* vert outer gap between windows and screen edge */
 static       int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */
 static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=10" };
 static const char dmenufont[]       = "JetBrainsMono Nerd Font:size=10";
 
-static const char col_gray1[]       = "#1d2021"; // Фон бара
-static const char col_gray2[]       = "#282828"; // Рамка НЕАКТИВНОГО окна (темная)
+static const char col_gray1[]       = "#1d2021";   // Bar background color
+static const char col_gray2[]       = "#282828";   // Inactive window border
 static const char col_gray3[]       = "#a89984"; 
 static const char col_gray4[]       = "#ddc7a1"; 
-static const char col_gray_light[]  = "#26292a"; // Фон активного элемента бара
-static const char col_active_border[] = "#504945"; // Рамка АКТИВНОГО окна
+static const char col_gray_light[]  = "#26292a";   // Background of the active bar element
+static const char col_active_border[] = "#504945"; // Active window border
 
 static const char *colors[][3]      = {
 	/*               fg         bg             border   */
@@ -72,8 +72,8 @@ void
 viewnext(const Arg *arg) {
 	unsigned int curtags = selmon->tagset[selmon->seltags];
 	unsigned int nexttags = (curtags << 1);
-	if (nexttags & (1 << 6)) /* Переход после 6-го тега */
-		nexttags = 1;        /* Возвращаемся на 1-й */
+	if (nexttags & (1 << 6))
+		nexttags = 1;
 	Arg a = { .ui = nexttags };
 	view(&a);
 }
@@ -83,7 +83,7 @@ viewprev(const Arg *arg) {
 	unsigned int curtags = selmon->tagset[selmon->seltags];
 	unsigned int prevtags = (curtags >> 1);
 	if (!prevtags)
-		prevtags = (1 << 5); /* Переход левее 1-го на 6-й тег */
+		prevtags = (1 << 5); 
 	Arg a = { .ui = prevtags };
 	view(&a);
 }
@@ -143,10 +143,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
 
-// light
+// light (backlight)
 	{ 0,                            XK_F5,     spawn,          SHCMD("backlight decr 7") },
 	{ 0,                            XK_F6,     spawn,          SHCMD("backlight incr 7") },
-// sound (OSS)
+// sound (OSS - mixer)
 	{ 0,                            XK_F2,     spawn,          SHCMD("mixer vol=-0.08") },
 	{ 0,                            XK_F3,     spawn,          SHCMD("mixer vol=+0.08") },
 	{ 0,                            XK_F1,     spawn,          SHCMD("mixer vol.mute=toggle") },
