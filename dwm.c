@@ -1752,8 +1752,12 @@ showhide(Client *c)
 	if (!c)
 		return;
 	if (ISVISIBLE(c)) {
-		/* show clients top down */
 		window_map(dpy, c, 1);
+		
+		if (c == selmon->sel) {
+			setfocus(c);
+		}
+		
 		showhide(c->snext);
 	} else {
 		/* hide clients bottom up */
