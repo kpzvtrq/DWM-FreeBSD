@@ -83,7 +83,7 @@ static const Layout layouts[] = {
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_space,  spawn,          SHCMD("rofi -show drun") },
-  { 0,                            XK_Print,  spawn,          SHCMD("flameshot gui -p $HOME/screenshots") },
+  { 0,                            XK_Print,  spawn,          SHCMD("flameshot gui -p $HOME/src/screenshots") },
   
 	{ MODKEY,                       XK_w,      spawn,          SHCMD("kitty") },
 	{ MODKEY,                       XK_u,      spawn,          SHCMD("chrome") },
