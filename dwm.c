@@ -302,6 +302,26 @@ static void incrovgaps(const Arg *arg);
 static void togglegaps(const Arg *arg);
 static void defaultgaps(const Arg *arg);
 
+void
+viewnext(const Arg *arg) {
+	unsigned int curtags = selmon->tagset[selmon->seltags];
+	unsigned int nexttags = (curtags << 1);
+	if (nexttags & (1 << 6))
+		nexttags = 1;
+	Arg a = { .ui = nexttags };
+	view(&a);
+}
+
+void
+viewprev(const Arg *arg) {
+	unsigned int curtags = selmon->tagset[selmon->seltags];
+	unsigned int prevtags = (curtags >> 1);
+	if (!prevtags)
+		prevtags = (1 << 5); 
+	Arg a = { .ui = prevtags };
+	view(&a);
+}
+
 #include "config.h"
 
 struct Pertag {

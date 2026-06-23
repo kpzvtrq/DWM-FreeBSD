@@ -11,7 +11,8 @@ static const int topbar             = 0;        /* 0 means bottom bar */
 
 static const char *fonts[] = {
     "JetBrainsMono Nerd Font:style=SemiBold:pixelsize=14:antialias=true:autohint=true",
-    "JetBrainsMono Nerd Font:style=Medium:pixelsize=14:antialias=true:autohint=true" };
+    "JetBrainsMono Nerd Font:style=Medium:pixelsize=14:antialias=true:autohint=true"
+};
 
 static const char col_gray1[]       = "#1d2021";   // Bar background color
 static const char col_gray2[]       = "#282828";   // Inactive window border
@@ -70,26 +71,6 @@ static const Layout layouts[] = {
 /* key definitions */
 #define MODKEY Mod4Mask
 
-void
-viewnext(const Arg *arg) {
-	unsigned int curtags = selmon->tagset[selmon->seltags];
-	unsigned int nexttags = (curtags << 1);
-	if (nexttags & (1 << 6))
-		nexttags = 1;
-	Arg a = { .ui = nexttags };
-	view(&a);
-}
-
-void
-viewprev(const Arg *arg) {
-	unsigned int curtags = selmon->tagset[selmon->seltags];
-	unsigned int prevtags = (curtags >> 1);
-	if (!prevtags)
-		prevtags = (1 << 5); 
-	Arg a = { .ui = prevtags };
-	view(&a);
-}
-
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -99,14 +80,13 @@ viewprev(const Arg *arg) {
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-/* commands */
-// static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_space,  spawn,          SHCMD("rofi -show drun") },
-	{ MODKEY,                       XK_w,      spawn,          SHCMD("kitty") },
   { 0,                            XK_Print,  spawn,          SHCMD("flameshot gui -p $HOME/screenshots") },
+  
+	{ MODKEY,                       XK_w,      spawn,          SHCMD("kitty") },
+	{ MODKEY,                       XK_u,      spawn,          SHCMD("chrome") },
 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
