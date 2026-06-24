@@ -33,11 +33,10 @@ static const char *tags[] = { "", "", "󰎪", "󰎭", "󰎱", "󰎳" };
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING) = title
-	 */
+	 *	WM_NAME(STRING) = title */
+
 	/* class      instance    title       tags mask     isfloating   monitor */
-	// { "kitty",    NULL,       NULL,       1 << 1,       0,           -1 },
-	{ "Chromium-browser",     NULL,       NULL,         1 << 0,      0,    -1 },
+	{ "librewolf",     NULL,       NULL,         1 << 0,      0,    -1 },
 };
 
 /* layout(s) */
@@ -86,7 +85,7 @@ static const Key keys[] = {
   { 0,                            XK_Print,  spawn,          SHCMD("flameshot gui -p $HOME/src/screenshots") },
   
 	{ MODKEY,                       XK_w,      spawn,          SHCMD("kitty") },
-	{ MODKEY,                       XK_u,      spawn,          SHCMD("chrome") },
+	{ MODKEY,                       XK_u,      spawn,          SHCMD("librewolf") },
 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
