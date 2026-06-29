@@ -85,7 +85,7 @@ static const Key keys[] = {
   { 0,                            XK_Print,  spawn,          SHCMD("flameshot gui -p $HOME/src/screenshots") },
   
 	{ MODKEY,                       XK_w,      spawn,          SHCMD("kitty") },
-	{ MODKEY,                       XK_u,      spawn,          SHCMD("librewolf") },
+	{ MODKEY,                       XK_l,      spawn,          SHCMD("librewolf") },
 
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
