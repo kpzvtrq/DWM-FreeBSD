@@ -269,15 +269,7 @@ static void horizgrid(Monitor *m);
 static void gaplessgrid(Monitor *m);
 static void centeredmaster(Monitor *m);
 static void centeredfloatingmaster(Monitor *m);
-static void incrgaps(const Arg *arg);
-static void incrigaps(const Arg *arg);
-static void incrogaps(const Arg *arg);
-static void incrihgaps(const Arg *arg);
-static void incrivgaps(const Arg *arg);
-static void incrohgaps(const Arg *arg);
-static void incrovgaps(const Arg *arg);
 static void togglegaps(const Arg *arg);
-static void defaultgaps(const Arg *arg);
 
 void
 viewnext(const Arg *arg) {

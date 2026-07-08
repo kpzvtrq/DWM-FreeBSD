@@ -1,3 +1,4 @@
 dwm
-*.tar.gz
 config.h
+*.tar.gz
+*.o
