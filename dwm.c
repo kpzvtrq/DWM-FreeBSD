@@ -195,8 +195,6 @@ static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
-static void toggletag(const Arg *arg);
-static void toggleview(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
 static void unmapnotify(XEvent *e);
@@ -211,6 +209,8 @@ static void updatetitle(Client *c);
 static void updatewindowtype(Client *c);
 static void updatewmhints(Client *c);
 static void view(const Arg *arg);
+static void viewnext(const Arg *arg);
+static void viewprev(const Arg *arg);
 static void window_set_state(Display *dpy, Window win, long state);
 static void window_map(Display *dpy, Client *c, int deiconify);
 static void window_unmap(Display *dpy, Window win, Window root, int iconify);
@@ -270,26 +270,6 @@ static void gaplessgrid(Monitor *m);
 static void centeredmaster(Monitor *m);
 static void centeredfloatingmaster(Monitor *m);
 static void togglegaps(const Arg *arg);
-
-void
-viewnext(const Arg *arg) {
-	unsigned int curtags = selmon->tagset[selmon->seltags];
-	unsigned int nexttags = (curtags << 1);
-	if (nexttags & (1 << 6))
-		nexttags = 1;
-	Arg a = { .ui = nexttags };
-	view(&a);
-}
-
-void
-viewprev(const Arg *arg) {
-	unsigned int curtags = selmon->tagset[selmon->seltags];
-	unsigned int prevtags = (curtags >> 1);
-	if (!prevtags)
-		prevtags = (1 << 5); 
-	Arg a = { .ui = prevtags };
-	view(&a);
-}
 
 #include "config.h"
 
@@ -1812,57 +1792,6 @@ togglefloating(const Arg *arg)
 }
 
 void
-toggletag(const Arg *arg)
-{
-	unsigned int newtags;
-
-	if (!selmon->sel)
-		return;
-	newtags = selmon->sel->tags ^ (arg->ui & TAGMASK);
-	if (newtags) {
-		selmon->sel->tags = newtags;
-		focus(NULL);
-		arrange(selmon);
-	}
-}
-
-void
-toggleview(const Arg *arg)
-{
-	unsigned int newtagset = selmon->tagset[selmon->seltags] ^ (arg->ui & TAGMASK);
-	int i;
-
-	if (newtagset) {
-		selmon->tagset[selmon->seltags] = newtagset;
-
-		if (newtagset == ~0) {
-			selmon->pertag->prevtag = selmon->pertag->curtag;
-			selmon->pertag->curtag = 0;
-		}
-
-		/* test if the user did not select the same tag */
-		if (!(newtagset & 1 << (selmon->pertag->curtag - 1))) {
-			selmon->pertag->prevtag = selmon->pertag->curtag;
-			for (i = 0; !(newtagset & 1 << i); i++) ;
-			selmon->pertag->curtag = i + 1;
-		}
-
-		/* apply settings for this view */
-		selmon->nmaster = selmon->pertag->nmasters[selmon->pertag->curtag];
-		selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag];
-		selmon->sellt = selmon->pertag->sellts[selmon->pertag->curtag];
-		selmon->lt[selmon->sellt] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt];
-		selmon->lt[selmon->sellt^1] = selmon->pertag->ltidxs[selmon->pertag->curtag][selmon->sellt^1];
-
-		if (selmon->showbar != selmon->pertag->showbars[selmon->pertag->curtag])
-			togglebar(NULL);
-
-		focus(NULL);
-		arrange(selmon);
-	}
-}
-
-void
 unfocus(Client *c, int setfocus)
 {
 	if (!c)
@@ -2238,7 +2167,34 @@ view(const Arg *arg)
 	arrange(selmon);
 }
 
-Client *
+
+static void
+viewnext(const Arg *arg)
+{
+    int i;
+    unsigned int cur = selmon->tagset[selmon->seltags];
+
+    for (i = 0; i < LENGTH(tags); i++)
+        if (cur & (1 << i))
+            break;
+
+    Arg a = {.ui = 1 << ((i + 1) % LENGTH(tags))};
+    view(&a);
+}
+
+static void
+viewprev(const Arg *arg)
+{
+    int i;
+    unsigned int cur = selmon->tagset[selmon->seltags];
+
+    for (i = 0; i < LENGTH(tags); i++)
+        if (cur & (1 << i))
+            break;
+
+    Arg a = {.ui = 1 << ((i + LENGTH(tags) - 1) % LENGTH(tags))};
+    view(&a);
+}Client *
 wintoclient(Window w)
 {
 	Client *c;
