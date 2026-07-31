@@ -1,0 +1,4 @@
+bwm
+obj
+*.tar.gz
+*.o
